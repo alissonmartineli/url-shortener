@@ -1,12 +1,19 @@
-import express from "express";
+import express from 'express'
+import URLShortenerController from './controllers/URLShortenerController'
+import URLShortenerRepositoryInMemory from './repositories/URLShortenerRepositoryInMemory'
+import URLShortenerService from './services/URLShortenerService'
 
-const app = express();
-app.use(express.json());
+const repository = new URLShortenerRepositoryInMemory()
+const service = new URLShortenerService(repository)
+const controller = new URLShortenerController(service)
 
-app.get("/", (_req, res) => {
-  res.send("Hello World!");
-});
+const app = express()
+app.use(express.json())
+
+app.post('/', (req, res) => controller.shorten(req, res))
+
+app.get('/:shortenedURL', (req, res) => controller.get(req, res))
 
 app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+  console.log('Server is running on port 3000')
+})
