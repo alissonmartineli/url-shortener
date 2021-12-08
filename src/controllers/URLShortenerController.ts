@@ -12,14 +12,14 @@ class URLShortenerController {
   async shorten(req: Request<{}, {}, { url: string }>, res: Response) {
     const url = req.body.url
     const shortenedURL = await this.service.shorten(url)
-    res.json({ shortenedURL: `${constants.API_URL}/${shortenedURL}` })
+    res.json({ url: url, shortenedURL: `${constants.API_URL}/${shortenedURL}` })
   }
 
   async get(req: Request<{ shortenedURL: string }>, res: Response) {
     const shortenedURL = req.params.shortenedURL
     const url = await this.service.get(shortenedURL)
     if (url) {
-      res.json({ url: url.url })
+      res.redirect(url.url)
     } else {
       res.status(404).send()
     }
